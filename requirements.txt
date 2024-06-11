@@ -1,0 +1,8 @@
+azure-identity
+azure-mgmt-resource
+azureml-core
+azure-storage-blob
+databricks-cli
+mlflow
+setuptools
+scikit-learn

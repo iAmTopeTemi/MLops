@@ -12,7 +12,7 @@ pipeline {
                     sh '''
                     # rm -rf .venv
 
-                     python3.8 -m venv .venv
+                     apt install python3.8-venv
                     
                     # Activate the virtual environment
                     . .venv/bin/activate

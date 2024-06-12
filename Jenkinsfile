@@ -12,10 +12,10 @@ pipeline {
                     sh '''
                     # rm -rf .venv
 
-                     sudo apt install python3.8-venv
+                    # python3.12 -m venv .venv
                     
                     # Activate the virtual environment
-                    . .venv/bin/activate
+                    # . .venv/bin/activate
 
                     # .venv/bin/pip install --upgrade pip setuptools
                     
@@ -34,9 +34,9 @@ pipeline {
                 echo 'Retrieving Model from MLflow...'
                 script {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
-                        def run_id = sh(script: '.venv/bin/python3 retrieve_model_mlflow.py', returnStdout: true).trim()
-                        echo "Captured RUN ID: ${run_id}"
-                        env.MLFLOW_RUN_ID = run_id
+                        // def run_id = sh(script: '.venv/bin/python3 retrieve_model_mlflow.py', returnStdout: true).trim()
+                        // echo "Captured RUN ID: ${run_id}"
+                        // env.MLFLOW_RUN_ID = run_id
                         sh 'ls'
                     }
                 }
@@ -81,9 +81,10 @@ pipeline {
                 script {
                     // withCredentials([string(credentialsId: 'databricks-token', variable: 'DATABRICKS_TOKEN')]) {
                     withEnv(["DATABRICKS_HOST=${env.MLFLOW_TRACKING_URI}", "DATABRICKS_TOKEN=${env.DATABRICKS_TOKEN}", "MLFLOW_RUN_ID=${env.MLFLOW_RUN_ID}"]) {
-                        echo "RUN ID for Registration: ${env.MLFLOW_RUN_ID}"  // Debugging line
-                        sh 'echo $MLFLOW_RUN_ID'  // Debugging line
-                        sh '.venv/bin/python3 dev/update_model_tag.py'
+                        // echo "RUN ID for Registration: ${env.MLFLOW_RUN_ID}"
+                        // sh 'echo $MLFLOW_RUN_ID'
+                        // sh '.venv/bin/python3 dev/update_model_tag.py'
+                        sh 'pwd'
                     }
                 }
             }

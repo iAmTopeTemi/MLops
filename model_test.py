@@ -19,12 +19,12 @@ try:
     # ML Workspace Test
     ws = Workspace(subscription_id=subscription_id,
             resource_group="MLops_project",
-            workspace_name="hamzaworkspace",
+            workspace_name="temiworkspace",
             auth=svc_pr
     )
 
     # Get the deployed web service
-    service_name = 'demo-rf-service'  # Replace with your service name
+    service_name = 'sim-rf-service'
     service = Webservice(workspace=ws, name=service_name)
 
     # Get the scoring URI
@@ -36,12 +36,16 @@ try:
     headers = {'Content-Type': 'application/json'}
 
     # Sample data to send to the model for prediction
-    data = {
-        "data": [
-            [5.1, 3.5, 1.4, 0.2],  # Example input data point
-            [6.7, 3.0, 5.2, 2.3]   # Another example input data point
-        ]
-    }
+    # data = {
+    #     "data": [
+    #         [5.1, 3.5, 1.4, 0.2],  # Example input data point
+    #         [6.7, 3.0, 5.2, 2.3]   # Another example input data point
+    #     ]
+    # }
+    data = [
+        [5.1, 3.5, 1.4, 0.2],  # Example input data point
+        [6.7, 3.0, 5.2, 2.3]   # Another example input data point
+    ]
 
     # Convert the data to JSON format
     input_data = json.dumps(data)

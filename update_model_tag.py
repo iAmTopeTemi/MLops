@@ -3,35 +3,28 @@ import os
 
 # Set MLflow tracking URI
 mlflow.set_tracking_uri("databricks")
+mlflow.set_registry_uri('databricks-uc')
 os.environ['DATABRICKS_HOST'] = os.getenv('MLFLOW_TRACKING_URI')
 os.environ['DATABRICKS_TOKEN'] = os.getenv('DATABRICKS_TOKEN')
-
-# Get the run ID from the environment variable
-run_id = os.getenv('MLFLOW_RUN_ID')
-if not run_id:
-    raise ValueError("Run ID environment variable 'MLFLOW_RUN_ID' is not set or is null")
 
 # Initialize the MLflow client
 client = mlflow.tracking.MlflowClient()
 
 # Retrieve the model version associated with the run ID
-model_name = 'demo_rf_model'
+# Correct the model name format
+catalog_name = "temiuc"
+schema_name = "default"
+model_name = f"{catalog_name}.{schema_name}.sim_rf_model"
 latest_model = None
 
-for mv in client.search_model_versions(f"name='{model_name}'"):
-    if mv.run_id == run_id:
-        latest_model = mv
-        break
+# Retrieve the latest model version with alias "Development"
+latest_version_info = client.get_model_version_by_alias(model_name, "Development")
+print(f"Latest model version with alias 'Development': {latest_version_info.version}")
 
-if not latest_model:
-    raise ValueError(f"No model version found for run ID: {run_id}")
+# Load the latest model version
+model_uri = f"models:/{model_name}@Development"
+# latest_model = mlflow.pyfunc.load_model(model_uri)
+print(f"Loaded model URI: {model_uri}")
 
-# Update the model tag
-client.set_model_version_tag(
-    name=model_name,
-    version=latest_model.version,
-    key="stage",
-    value="development"
-)
-
-print(f"Updated model version {latest_model.version} tag to 'Challenger'")
+client.set_registered_model_alias(model_name, "Challenger", latest_version_info.version)
+print(f"Updated model alias to 'Challenger' for version: {latest_version_info.version}")

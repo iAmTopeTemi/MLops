@@ -23,8 +23,9 @@ try:
     )
 
     # Get the web service
-    service_name = 'demo-rf-service'  # Replace with your service name
+    service_name = 'sim-rf-service'  # Replace with your service name
     service = Webservice(workspace=ws, name=service_name)
+    print("Service Logs:", service.get_logs())
 
     # Delete the web service
     service.delete()

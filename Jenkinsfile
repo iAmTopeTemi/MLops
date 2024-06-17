@@ -35,7 +35,7 @@ pipeline {
                 script {
                     sh '''                        
                         # Run the retriever script
-                        .venv/bin/python3 train_model_mlflow.py
+                        .venv/bin/python3 dev_branch/train_model_mlflow.py
                         '''
                 }
             }
@@ -84,7 +84,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''                        
                         # Run the deployment script
-                         .venv/bin/python3 deploy_model_to_azure.py
+                         .venv/bin/python3 dev_branch/deploy_model_to_azure.py
                         '''
                     }
                 }
@@ -101,7 +101,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''
                         # Run the deployment script
-                         .venv/bin/python3 model_test.py
+                         .venv/bin/python3 dev_branch/model_test.py
                         '''
                     }
                 }
@@ -118,7 +118,7 @@ pipeline {
                     withEnv(["DATABRICKS_HOST=${env.MLFLOW_TRACKING_URI}", "DATABRICKS_TOKEN=${env.DATABRICKS_TOKEN}", "MLFLOW_RUN_ID=${env.MLFLOW_RUN_ID}"]) {
                         echo "RUN ID for Registration: ${env.MLFLOW_RUN_ID}"
                         sh 'echo $MLFLOW_RUN_ID'
-                        sh '.venv/bin/python3 update_model_tag.py'
+                        sh '.venv/bin/python3 dev_branch/update_model_tag.py'
                         sh 'pwd'
                     }
                 }
@@ -135,7 +135,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''                        
                         # Run the training script
-                        .venv/bin/python3 save_model_to_ADLS.py
+                        .venv/bin/python3 dev_branch/save_model_to_ADLS.py
                         '''
                     }
                 }
@@ -152,7 +152,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''                       
                         # Run the deployment script
-                         .venv/bin/python3 destroy_web_service.py
+                         .venv/bin/python3 dev_branch/destroy_web_service.py
                         '''
                     }
                 }

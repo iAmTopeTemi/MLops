@@ -50,8 +50,8 @@ pipeline {
                 script {
                     sh '''                        
                         # Run the retriever script
-                        # .venv/bin/python3 get_unity_catalogs.py
-                        # .venv/bin/python3 get_catalog_schemas.py
+                         .venv/bin/python3 get_unity_catalogs.py
+                         .venv/bin/python3 get_catalog_schemas.py
                         '''
                 }
             }
@@ -84,7 +84,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''                        
                         # Run the deployment script
-                        # .venv/bin/python3 deploy_model_to_azure.py
+                         .venv/bin/python3 deploy_model_to_azure.py
                         '''
                     }
                 }
@@ -101,7 +101,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''
                         # Run the deployment script
-                        # .venv/bin/python3 model_test.py
+                         .venv/bin/python3 model_test.py
                         '''
                     }
                 }
@@ -152,7 +152,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''                       
                         # Run the deployment script
-                        # .venv/bin/python3 destroy_web_service.py
+                         .venv/bin/python3 destroy_web_service.py
                         '''
                     }
                 }

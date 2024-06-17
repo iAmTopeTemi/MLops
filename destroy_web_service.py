@@ -18,7 +18,7 @@ try:
     # ML Workspace Test
     ws = Workspace(subscription_id=subscription_id,
             resource_group="MLops_project",
-            workspace_name="hamzaworkspace",
+            workspace_name="temiworkspace",
             auth=svc_pr
     )
 

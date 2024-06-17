@@ -2,7 +2,12 @@ azure-identity
 azure-mgmt-resource
 azureml-core
 azure-storage-blob
+azure-storage-file-datalake
+azureml-dataprep
 databricks-cli
 mlflow
+mlflow[databricks]
+# mlflow-skinny[databricks]==2.5.0
 setuptools
 scikit-learn
+pandas

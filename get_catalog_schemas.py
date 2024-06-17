@@ -51,7 +51,7 @@ if not databricks_host or not databricks_token:
     raise ValueError("Environment variables 'DATABRICKS_HOST' and 'DATABRICKS_TOKEN' must be set")
 
 # Specify the catalog name
-catalog_name = 'hamzauc'
+catalog_name = 'temiuc'
 
 # Construct the API endpoint URL for listing schemas
 url = f"{databricks_host}/api/2.1/unity-catalog/schemas"

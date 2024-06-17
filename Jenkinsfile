@@ -65,9 +65,9 @@ pipeline {
                 echo 'Retrieving Model from MLflow...'
                 script {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
-                        // def run_id = sh(script: '.venv/bin/python3 retrieve_model_mlflow.py', returnStdout: true).trim()
-                        // echo "Captured RUN ID: ${run_id}"
-                        // env.MLFLOW_RUN_ID = run_id
+                        def run_id = sh(script: '.venv/bin/python3 retrieve_model_mlflow.py', returnStdout: true).trim()
+                        echo "Captured RUN ID: ${run_id}"
+                        env.MLFLOW_RUN_ID = run_id
                         sh 'pwd'
                     }
                 }

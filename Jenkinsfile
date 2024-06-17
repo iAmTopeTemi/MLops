@@ -35,7 +35,7 @@ pipeline {
                 script {
                     sh '''                        
                         # Run the retriever script
-                        .venv/bin/python3 dev_branch/train_model_mlflow.py
+                        .venv/bin/python3 train_model_mlflow.py
                         '''
                 }
             }
@@ -118,7 +118,7 @@ pipeline {
                     withEnv(["DATABRICKS_HOST=${env.MLFLOW_TRACKING_URI}", "DATABRICKS_TOKEN=${env.DATABRICKS_TOKEN}", "MLFLOW_RUN_ID=${env.MLFLOW_RUN_ID}"]) {
                         echo "RUN ID for Registration: ${env.MLFLOW_RUN_ID}"
                         sh 'echo $MLFLOW_RUN_ID'
-                        // sh '.venv/bin/python3 dev_branch/update_model_tag.py'
+                        sh '.venv/bin/python3 update_model_tag.py'
                         sh 'pwd'
                     }
                 }
@@ -135,7 +135,7 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
                         sh '''                        
                         # Run the training script
-                        .venv/bin/python3 dev_branch/save_model_to_ADLS.py
+                        .venv/bin/python3 save_model_to_ADLS.py
                         '''
                     }
                 }
@@ -152,151 +152,10 @@ pipeline {
                     withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
                         sh '''                       
                         # Run the deployment script
-                        # .venv/bin/python3 dev_branch/destroy_web_service.py
+                        # .venv/bin/python3 destroy_web_service.py
                         '''
                     }
                 }
-            }
-        }
-
-        // Pre Prod
-        stage('Preprod - Load From ADLS') {
-            when {
-                // Check if the branch is 'main'
-                branch 'main'
-            }
-            steps {
-                echo 'Loading model from ADLS...'
-                script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
-                        sh '.venv/bin/python3 main_preprod_branch/retrieve_model_from_ADLS.py'
-                    }
-                }
-            }
-        }
-        stage('Preprod - Log Model MLflow') {
-            when {
-                // Check if the branch is 'main'
-                branch 'main'
-            }
-            steps {
-                echo 'Logging model to MLflow...'
-                script {
-                    // sh '.venv/bin/python3 main_preprod_branch/log_model_to_mlflow.py'
-                    def run_id = sh(script: '.venv/bin/python3 main_preprod_branch/log_model_to_mlflow.py', returnStdout: true).trim()
-                    echo "Captured RUN ID: ${run_id}"
-                    env.MLFLOW_RUN_ID = run_id
-                }
-            }
-        }
-        stage('Preprod - Register Model UC') {
-            when {
-                // Check if the branch is 'main'
-                branch 'main'
-            }
-            steps {
-                script {
-                    withEnv(["MLFLOW_RUN_ID=${env.MLFLOW_RUN_ID}"]) {
-                        echo "RUN ID for Registration: ${env.MLFLOW_RUN_ID}"
-                        sh 'echo $MLFLOW_RUN_ID'
-                        echo 'Registering model to Unity Catalog...'
-                        sh '.venv/bin/python3 main_preprod_branch/register_model_uc.py'
-                    }
-                }
-            }
-        }
-        stage('Preprod - Model Deploy') {
-            when {
-                // Check which branch triggered the build
-                branch 'main'
-            }
-            steps {
-                echo 'Deploying to pre prod environment...'
-                script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
-                        sh '''                        
-                        # Run the deployment script
-                        .venv/bin/python3 main_preprod_branch/deploy_model_to_azure.py
-                        '''
-                    }
-                }
-            }
-        }
-        stage('Preprod - Model Unit Test') {
-            when {
-                // Check which branch triggered the build
-                branch 'main'
-            }
-            steps {
-                echo 'Testing deployed model (unit tests)...'
-                script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
-                        sh '''
-                        # Run the deployment script
-                        .venv/bin/python3 main_preprod_branch/model_test.py
-                        '''
-                    }
-                }
-            }
-        }
-        stage('Preprod - Model Integration Test') {
-            when {
-                // Check which branch triggered the build
-                branch 'main'
-            }
-            steps {
-                echo 'Testing deployed model (integration test)...'
-                script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
-                        sh '''
-                        # Run the deployment script
-                        .venv/bin/python3 main_preprod_branch/model_test.py
-                        '''
-                    }
-                }
-            }
-        }
-        stage('Preprod - Upgrade Model Alias') {
-            when {
-                // Check which branch triggered the build
-                branch 'main'
-            }
-            steps {
-                script {
-                    sh '.venv/bin/python3 main_preprod_branch/update_model_tag.py'
-                    sh 'pwd'
-                }
-            }
-        }
-        stage('Preprod - Destroy') {
-            when {
-                // Check which branch triggered the build
-                branch 'main'
-            }
-            steps {
-                echo 'Destroying web service for deployed model...'
-                script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
-                        sh '''                       
-                        # Run the deployment script
-                        .venv/bin/python3 main_preprod_branch/destroy_web_service.py
-                        '''
-                    }
-                }
-            }
-        }
-
-        // Prod
-        stage('Deploy to Production') {
-            when {
-                // Check if the branch is 'main' and contains a tag with 'release' prefix
-                allOf {
-                    branch 'main'
-                    tag 'release/*'
-                }
-            }
-            steps {
-                echo 'Deploying to Production environment...'
             }
         }
     }

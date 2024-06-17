@@ -65,8 +65,8 @@ def deploy_model_to_workspace(model_uri):
         )
 
         # Defining inference configuration
-        env = Environment.from_conda_specification(name='.menv', file_path='dev_branch/environment.yml')
-        inference_config = InferenceConfig(entry_script='dev_branch/score.py', environment=env)
+        env = Environment.from_conda_specification(name='.menv', file_path='environment.yml')
+        inference_config = InferenceConfig(entry_script='score.py', environment=env)
 
         # Define deployment configuration
         aci_config = AciWebservice.deploy_configuration(

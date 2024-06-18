@@ -1,0 +1,10 @@
+name: myenv
+dependencies:
+  - python=3.8
+  - scikit-learn
+  - pandas
+  - numpy
+  - pip
+  - mlflow
+  - pip:
+    - azureml-defaults

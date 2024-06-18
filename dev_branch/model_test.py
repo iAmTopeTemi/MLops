@@ -24,7 +24,7 @@ try:
     )
 
     # Get the deployed web service
-    service_name = 'sim-rf-service-pre-prod'
+    service_name = 'sim-rf-service'
     service = Webservice(workspace=ws, name=service_name)
 
     # Get the scoring URI

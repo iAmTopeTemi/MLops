@@ -25,7 +25,7 @@ pipeline {
                 }
             }
         }
-        stage('Model Train') {
+        stage('Model Train & Register to mlflow') {
             when {
                 // Check which branch triggered the build
                 branch 'dev'

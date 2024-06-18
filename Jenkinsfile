@@ -168,10 +168,13 @@ pipeline {
             steps {
                 echo 'Loading model from ADLS...'
                 script {
+                    withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                     sh '.venv/bin/python3 main_preprod_branch/retrieve_model_from_ADLS.py'
                 }
+                }         
             }
         }
+
         stage('Preprod - Log Model MLflow') {
             when {
                 // Check if the branch is 'main'
@@ -211,7 +214,7 @@ pipeline {
             steps {
                 echo 'Deploying to pre prod environment...'
                 script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
+                    withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''                        
                         # Run the deployment script
                         .venv/bin/python3 main_preprod_branch/deploy_model_to_azure.py
@@ -228,7 +231,7 @@ pipeline {
             steps {
                 echo 'Testing deployed model (unit tests)...'
                 script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
+                    withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''
                         # Run the deployment script
                         .venv/bin/python3 main_preprod_branch/model_test.py
@@ -245,7 +248,7 @@ pipeline {
             steps {
                 echo 'Testing deployed model (integration test)...'
                 script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
+                    withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''
                         # Run the deployment script
                         .venv/bin/python3 main_preprod_branch/model_test.py
@@ -274,7 +277,7 @@ pipeline {
             steps {
                 echo 'Destroying web service for deployed model...'
                 script {
-                    withCredentials([azureServicePrincipal(credentialsId: 'AzureServicePrincipal')]) {
+                    withCredentials([azureServicePrincipal(credentialsId: 'AzureSP')]) {
                         sh '''                       
                         # Run the deployment script
                         .venv/bin/python3 main_preprod_branch/destroy_web_service.py
